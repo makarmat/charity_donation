@@ -17,14 +17,26 @@
     <section id="stats" class="stats">
       <div class="container container--85">
         <div class="stats--item">
-          <em>10</em>
+          <em>{{ bags_quantity }}</em>
+          {% if bags_quantity == 1 %}
+          <h3>Oddany worek</h3>
+          {% elif bags_quantity > 1 and bags_quantity < 5 %}
+          <h3>Oddane worki</h3>
+          {% else %}
           <h3>Oddanych worków</h3>
+          {% endif %}
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius est beatae, quod accusamus illum tempora!</p>
         </div>
 
         <div class="stats--item">
-          <em>5</em>
+          <em>{{ institution_quantity }}</em>
+          {% if institution_quantity == 1 %}
+          <h3>Wsparta organizacja</h3>
+          {% elif institution_quantity > 1 and institution_quantity < 5 %}
+          <h3>Wsparte organizacje</h3>
+          {% else %}
           <h3>Wspartych organizacji</h3>
+          {% endif %}
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam magnam, sint nihil cupiditate quas quam.</p>
         </div>
 
