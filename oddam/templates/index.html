@@ -95,14 +95,21 @@
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
 
         <ul class="help--slides-items">
+          {% for fundation in fundations %}
           <li>
             <div class="col">
-              <div class="title">Fundacja "Dbam o Zdrowie"</div>
-              <div class="subtitle">Cel i misja: Pomoc dzieciom z ubogich rodzin.</div>
+              <div class="title">{{ fundation.name }}</div>
+              <div class="subtitle">{{ fundation.description }}.</div>
             </div>
-
-            <div class="col"><div class="text">ubrania, jedzenie, sprzęt AGD, meble, zabawki</div></div>
+            <div class="col">
+                <div class="text">
+                    {% for category in fundation.categories.all %}
+                        <a>{{ category }}, </a>
+                    {% endfor %}
+                </div>
+            </div>
           </li>
+            {% endfor %}
 
           <li>
             <div class="col">

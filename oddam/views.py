@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views import View
@@ -18,10 +20,17 @@ class LandingPage(TemplateView):
 
         donated_institutions = [i.institution.id for i in donations.exclude(institution=None)]
         institution_quantity = len(list(set(donated_institutions)))
-
+        
+        fundations = Institution.objects.filter(type=1)
+        category_list = []
+        for fundation in fundations:
+            for category in fundation.categories.all():
+                category_list.append(category.name)
         context = super(LandingPage, self).get_context_data(**kwargs)
         context['bags_quantity'] = bags_quantity
         context['institution_quantity'] = institution_quantity
+        context['fundations'] = fundations
+        context['category_list'] = category_list
         return context
 
 
@@ -38,3 +47,23 @@ class LoginView(View):
 class RegisterView(View):
     def get(self, request):
         return render(request, 'register.html')
+
+    def post(self, request):
+        name = request.POST['name']
+        surname = request.POST['surname']
+        email = request.POST['email']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+        users_list = [user.email for user in User.objects.all()]
+        if '@' not in email:
+            messages.warning(request, 'Wprowadzono niepoprawny e-mail')
+            return render(request, 'register.html')
+        elif email in users_list:
+            messages.warning(request, 'Użytkownik z tym adresem e-mail już istnieje')
+            return render(request, 'register.html')
+        elif password != password2:
+            messages.warning(request, 'Powtórzone hasło nie jest takie samo')
+            return render(request, 'register.html')
+        User.objects.create_user(username=email, first_name=name, last_name=surname, email=email, password=password)
+        return redirect('login')
+
