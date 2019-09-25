@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
@@ -42,6 +43,20 @@ class AddDonation(View):
 class LoginView(View):
     def get(self, request):
         return render(request, 'login.html')
+
+    def post(self, request):
+        username = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if not User.objects.filter(username=username).exists():
+            messages.warning(request, 'Użytkownik o loginie "{}" nie istnieje'.format(username))
+            return redirect('register')
+        elif user is not None:
+            login(request, user)
+            return redirect('landing_page')
+        else:
+            messages.warning(request, 'Nieprawidłowe hasło')
+            return render(request, 'login.html')
 
 
 class RegisterView(View):
