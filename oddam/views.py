@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
@@ -81,4 +81,10 @@ class RegisterView(View):
             return render(request, 'register.html')
         User.objects.create_user(username=email, first_name=name, last_name=surname, email=email, password=password)
         return redirect('login')
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('landing_page')
 
