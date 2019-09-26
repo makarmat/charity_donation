@@ -14,7 +14,7 @@ class Category(models.Model):
 INSTITUTIONS = (
     (1, 'fundacja'),
     (2, 'organizacja pozarządowa'),
-    (3, 'zbióra lokalna')
+    (3, 'zbiórka lokalna')
 )
 
 

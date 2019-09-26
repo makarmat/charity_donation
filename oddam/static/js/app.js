@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
       e.preventDefault();
       const $btn = e.target;
 
+
       // Buttons Active class change
       [...this.$buttonsContainer.children].forEach(btn => btn.firstElementChild.classList.remove("active"));
       $btn.classList.add("active");
@@ -61,9 +62,11 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     changePage(e) {
       e.preventDefault();
-      const page = e.target.dataset.page;
+      // const page = e.target.dataset.id;
+      const page = e.target.dataset.id;
 
       console.log(page);
+
     }
   }
   const helpSection = document.querySelector(".help");
