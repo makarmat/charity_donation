@@ -6,7 +6,8 @@
 
     <section class="login-page">
       <h2>Zaloguj się</h2>
-      <form action="{% url 'login' %}" method="post">{% csrf_token %}
+      <form action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
+          {% csrf_token %}
         <div class="form-group">
           <input type="email" name="email" placeholder="Email" />
         </div>

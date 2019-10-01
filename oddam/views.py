@@ -1,14 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views import View
 from django.views.generic import TemplateView
 
-from oddam.models import Donation, Institution
+from oddam.models import Donation, Institution, Category
 
 
 class LandingPage(View):
@@ -18,8 +20,7 @@ class LandingPage(View):
         for donation in donations:
             bags_quantity += donation.quantity
 
-        donated_institutions = [i.institution.id for i in donations.exclude(institution=None)]
-        institution_quantity = len(list(set(donated_institutions)))
+        institution_quantity = Donation.objects.all().values('institution').annotate(total=Count('institution')).order_by('total').count()
 
         fundations_list = Institution.objects.filter(type=1)
         ngos = Institution.objects.filter(type=2)
@@ -39,9 +40,16 @@ class LandingPage(View):
         return render(request, 'index.html', args)
 
 
-class AddDonation(View):
+class AddDonation(PermissionRequiredMixin, View):
+    permission_required = 'oddam.add_donation'
+
     def get(self, request):
-        return render(request, 'form.html')
+        categories = Category.objects.all()
+        institutions = Institution.objects.all()
+        return render(request, 'form.html', {
+            'categories': categories,
+            'institutions': institutions
+        })
 
 
 class LoginView(View):
@@ -53,13 +61,13 @@ class LoginView(View):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if not User.objects.filter(username=username).exists():
-            messages.warning(request, 'Użytkownik o loginie "{}" nie istnieje'.format(username))
+            messages.warning(request, 'Użytkownik o loginie "{}" nie istnieje!'.format(username))
             return redirect('register')
         elif user is not None:
             login(request, user)
             return redirect('landing_page')
         else:
-            messages.warning(request, 'Nieprawidłowe hasło')
+            messages.warning(request, 'Hasło nieprawidłowe!')
             return render(request, 'login.html')
 
 

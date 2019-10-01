@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$el = $el;
       this.$buttonsContainer = $el.querySelector(".help--buttons");
       this.$slidesContainers = $el.querySelectorAll(".help--slides");
-      this.currentSlide = this.$buttonsContainer.querySelector(".active").parentElement.dataset.id;
+      this.$slidesPagination = $el.querySelectorAll('.help--slides-pagination');
+      // this.currentSlide = this.$buttonsContainer.querySelector(".active").parentElement.dataset.id;
       this.init();
     }
 
@@ -64,8 +65,23 @@ document.addEventListener("DOMContentLoaded", function() {
       e.preventDefault();
       // const page = e.target.dataset.id;
       const page = e.target.dataset.id;
-
       console.log(page);
+
+      // Buttons Active class change
+      [...this.$buttonsContainer.children].forEach(btn => btn.firstElementChild.classList.remove("active"));
+      page.classList.add("active");
+
+      // Current slide
+      this.currentSlide = page.parentElement.dataset.id;
+
+      // Slides active class change
+      this.$slidesContainers.forEach(el => {
+        el.classList.remove("active");
+
+        if (el.dataset.id === this.currentSlide) {
+          el.classList.add("active");
+        }
+      });
 
     }
   }
@@ -174,6 +190,9 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$next = form.querySelectorAll(".next-step");
       this.$prev = form.querySelectorAll(".prev-step");
       this.$step = form.querySelector(".form--steps-counter span");
+      this.$checkboxInputs = form.querySelectorAll('input[type=checkbox]');
+      this.$catDivs = form.querySelectorAll('div.category');
+      this.$institutionDivs = form.querySelector('div.form-group--checkbox');
       this.currentStep = 1;
 
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
@@ -200,6 +219,31 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep++;
+
+          /** Get chosen categories from Step 1 and put them in array */
+          const category_array = [];
+          this.$checkboxInputs.forEach(function (element) {
+            if (element.checked === true) {
+              category_array.push(element.value)
+            }
+          });
+
+          /** Hidden or visible institutions by category which is display in Step 3*/
+          for (let i = 0; i < category_array.length; i++) {
+            for (let j = 0; j < this.$catDivs.length; j++) {
+              let innerTextArray = this.$catDivs[j].innerText.split(', ');
+              console.log(category_array[i]);
+              console.log(innerTextArray);
+              if (innerTextArray.indexOf(category_array[i]) > -1) {
+
+                this.$catDivs[j].parentElement.parentElement.parentElement.setAttribute('style', 'display: inline-block')
+              }
+              else {
+                this.$catDivs[j].parentElement.parentElement.parentElement.setAttribute('style', 'display: none')
+              }
+            }
+          }
+
           this.updateForm();
         });
       });
@@ -209,6 +253,7 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep--;
+          const category_array = [];
           this.updateForm();
         });
       });
@@ -237,6 +282,9 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 6;
       this.$step.parentElement.hidden = this.currentStep >= 6;
 
+
+
+
       // TODO: get data from inputs and show them in summary
     }
 
@@ -255,4 +303,13 @@ document.addEventListener("DOMContentLoaded", function() {
   if (form !== null) {
     new FormSteps(form);
   }
+  // const $checkboxInputs = $('div[data-step="1"]').querySelectorAll('input[type=checkbox]');
+  // const category_array = [];
+  // $checkboxInputs.forEach(function (element) {
+  //   if (element.checked === true) {
+  //     category_array.push(element.value)
+  //   }
+  // });
+
+
 });

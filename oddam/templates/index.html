@@ -102,11 +102,7 @@
               <div class="subtitle">{{ fundation.description }}.</div>
             </div>
             <div class="col">
-                <div class="text">
-                    {% for category in fundation.categories.all %}
-                        <a>{{ category }}; </a>
-                    {% endfor %}
-                </div>
+                <div class="text">{{ fundation.categories.all|join:"; " }}</div>
             </div>
           </li>
             {% endfor %}
@@ -140,11 +136,8 @@
               <div class="subtitle">{{ ngo.description }}</div>
             </div>
 
-            <div class="col"><div class="text">
-                {% for category in ngo.categories.all %}
-                        <a>{{ category }}; </a>
-                {% endfor %}
-            </div></div>
+            <div class="col">
+                <div class="text">{{ ngo.categories.all|join:"; " }}</div></div>
           </li>
           {% endfor %}
         </ul>
@@ -170,21 +163,11 @@
               <div class="title">{{ local_collection.name }}</div>
               <div class="subtitle">{{ local_collection.description }}</div>
             </div>
-            <div class="col"><div class="text">
-            {% for category in local_collection.categories.all %}
-                <a>{{ category }}; </a>
-            {% endfor %}
-            </div></div>
+            <div class="col">
+                <div class="text">{{ local_collection.categories.id.all|join:"; " }}</div>
+            </div>
           </li>
            {% endfor %}
-          <li>
-            <div class="col">
-              <div class="title">Lokalna zbiórka 2</div>
-              <div class="subtitle">Lorem ipsum dolor sit amet consectetur.</div>
-            </div>
-
-            <div class="col"><div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div></div>
-          </li>
         </ul>
 
         <!-- Pagination
