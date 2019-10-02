@@ -192,10 +192,17 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$step = form.querySelector(".form--steps-counter span");
       this.$checkboxInputs = form.querySelectorAll('input[type=checkbox]');
       this.$catDivs = form.querySelectorAll('div.category');
-      this.$institutionDivs = form.querySelector('div.form-group--checkbox');
       this.currentStep = 1;
-
+      this.$fourthStepDiv = form.querySelector('div[data-step="3"]');
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
+      this.$addressInput = form.querySelector('input[name="address"]');
+      this.$cityInput = form.querySelector('input[name="city"]');
+      this.$postcodeInput = form.querySelector('input[name="postcode"]');
+      this.$phoneInput = form.querySelector('input[name="phone"]');
+      this.$dateInput = form.querySelector('input[name="date"]');
+      this.$timeInput = form.querySelector('input[name="time"]');
+      this.$commentInput = form.querySelector('input[name="comment"]');
+      this.$bagsInput = form.querySelector('input[name="bags"]');
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
 
@@ -231,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
           /** Hidden or visible institutions by category which is display in Step 3*/
           for (let i = 0; i < category_array.length; i++) {
             for (let j = 0; j < this.$catDivs.length; j++) {
-              let innerTextArray = this.$catDivs[j].innerText.split(', ');
+              const innerTextArray = this.$catDivs[j].innerText.split('% ');
               console.log(category_array[i]);
               console.log(innerTextArray);
               if (innerTextArray.indexOf(category_array[i]) > -1) {
@@ -242,6 +249,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.$catDivs[j].parentElement.parentElement.parentElement.setAttribute('style', 'display: none')
               }
             }
+          }
+
+          if (this.currentStep === 4) {
+
+
           }
 
           this.updateForm();

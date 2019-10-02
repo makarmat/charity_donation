@@ -111,7 +111,7 @@
                 <span class="description">
                   <div class="title">{{ institution.name }}</div>
                   <div class="subtitle">{{ institution.description }}</div>
-                  <div class="category" style="display: none">{{ institution.categories.all|join:', ' }}</div>
+                  <div class="category" style="display: none">{{ institution.categories.all|join:'% ' }}</div>
                 </span>
               </label>
             </div>
@@ -123,7 +123,7 @@
             </div>
           </div>
 
-          <!-- STEP 5 -->
+          <!-- STEP 4 -->
           <div data-step="4">
             <h3>Podaj adres oraz termin odbioru rzecz przez kuriera:</h3>
 
@@ -154,7 +154,7 @@
               <div class="form-section--column">
                 <h4>Termin odbioru</h4>
                 <div class="form-group form-group--inline">
-                  <label> Data <input type="date" name="data" /> </label>
+                  <label> Data <input type="date" name="date" /> </label>
                 </div>
 
                 <div class="form-group form-group--inline">
@@ -165,6 +165,7 @@
                   <label>
                     Uwagi dla kuriera
                     <textarea name="more_info" rows="5"></textarea>
+                      <input type="text" name="comment">
                   </label>
                 </div>
               </div>
@@ -175,7 +176,7 @@
             </div>
           </div>
 
-          <!-- STEP 6 -->
+          <!-- STEP 5 -->
           <div data-step="5">
             <h3>Podsumowanie Twojej darowizny</h3>
 
