@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$checkboxInputs = form.querySelectorAll('input[type=checkbox]');
       this.$catDivs = form.querySelectorAll('div.category');
       this.currentStep = 1;
-      this.$fourthStepDiv = form.querySelector('div[data-step="3"]');
+      this.$fifthStepDiv = form.querySelector('div[data-step="5"]');
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
       this.$addressInput = form.querySelector('input[name="address"]');
       this.$cityInput = form.querySelector('input[name="city"]');
@@ -201,8 +201,9 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$phoneInput = form.querySelector('input[name="phone"]');
       this.$dateInput = form.querySelector('input[name="date"]');
       this.$timeInput = form.querySelector('input[name="time"]');
-      this.$commentInput = form.querySelector('input[name="comment"]');
+      this.$commentTextarea = form.querySelector('textarea[name="more_info"]');
       this.$bagsInput = form.querySelector('input[name="bags"]');
+      this.$divsTitle = form.querySelectorAll('div[data-step="3"] div.title');
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
 
@@ -239,8 +240,6 @@ document.addEventListener("DOMContentLoaded", function() {
           for (let i = 0; i < category_array.length; i++) {
             for (let j = 0; j < this.$catDivs.length; j++) {
               const innerTextArray = this.$catDivs[j].innerText.split('% ');
-              console.log(category_array[i]);
-              console.log(innerTextArray);
               if (innerTextArray.indexOf(category_array[i]) > -1) {
 
                 this.$catDivs[j].parentElement.parentElement.parentElement.setAttribute('style', 'display: inline-block')
@@ -250,12 +249,7 @@ document.addEventListener("DOMContentLoaded", function() {
               }
             }
           }
-
-          if (this.currentStep === 4) {
-
-
-          }
-
+          // console.log(this.$fifthStepDiv);
           this.updateForm();
         });
       });
@@ -294,10 +288,31 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 6;
       this.$step.parentElement.hidden = this.currentStep >= 6;
 
+      /** Get data from inputs and show them in summary */
+      const category_array = [];
+          this.$checkboxInputs.forEach(function (element) {
+            if (element.checked === true) {
+              category_array.push(element.value)
+            }
+          });
+      if (this.currentStep === 5) {
+        // console.log(this.$fifthStepDiv.querySelectorAll('li')[0].querySelector('span.summary--text').innerText);
+        let textLi = this.$fifthStepDiv.querySelectorAll('li');
+        textLi[0].querySelector('span.summary--text').innerHTML = this.$bagsInput.value + ' worki zawierające: <br>' + category_array.join(', ');
+        this.$divsTitle.forEach(function (element) {
+          if (element.parentElement.parentElement.firstChild.nextSibling.checked === true) {
+            textLi[1].querySelector('span.summary--text').innerHTML = 'Dla fundacji ' + '"' + element.innerText + '"'
+          }
+        });
+        textLi[2].innerHTML = this.$addressInput.value;
+        textLi[3].innerHTML = this.$cityInput.value;
+        textLi[4].innerHTML = this.$postcodeInput.value;
+        textLi[5].innerHTML = this.$phoneInput.value;
+        textLi[6].innerHTML = this.$dateInput.value;
+        textLi[7].innerHTML = this.$timeInput.value;
+        textLi[8].innerHTML = this.$commentTextarea.value;
+        }
 
-
-
-      // TODO: get data from inputs and show them in summary
     }
 
     /**
@@ -308,6 +323,26 @@ document.addEventListener("DOMContentLoaded", function() {
     submit(e) {
       e.preventDefault();
       this.currentStep++;
+      const category_array = [];
+          this.$checkboxInputs.forEach(function (element) {
+            if (element.checked === true) {
+              category_array.push(element.value)
+            }
+          });
+      // $.ajax({
+      //   type: "POST",
+      //   url: "/add_donation/",
+      //   data: {
+      //     'quantity': this.$bagsInput.value,
+      //     'categories': category_array,
+      //     'institution':
+      //   },
+      //   success: function () {
+      //     $('#message').html("<h2>Contact Form Submitted!</h2>")
+      //   }
+      // });
+      // return false;
+
       this.updateForm();
     }
   }
@@ -315,13 +350,7 @@ document.addEventListener("DOMContentLoaded", function() {
   if (form !== null) {
     new FormSteps(form);
   }
-  // const $checkboxInputs = $('div[data-step="1"]').querySelectorAll('input[type=checkbox]');
-  // const category_array = [];
-  // $checkboxInputs.forEach(function (element) {
-  //   if (element.checked === true) {
-  //     category_array.push(element.value)
-  //   }
-  // });
+
 
 
 });
