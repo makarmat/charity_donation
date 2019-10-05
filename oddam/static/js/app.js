@@ -203,7 +203,10 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$timeInput = form.querySelector('input[name="time"]');
       this.$commentTextarea = form.querySelector('textarea[name="more_info"]');
       this.$bagsInput = form.querySelector('input[name="bags"]');
+      this.$userId = form.querySelector('input[name="user_id"]');
       this.$divsTitle = form.querySelectorAll('div[data-step="3"] div.title');
+      this.$thirdStepInputs = form.querySelectorAll('div[data-step="3"] input[type=radio]');
+      this.institutionId = '';
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
 
@@ -311,7 +314,9 @@ document.addEventListener("DOMContentLoaded", function() {
         textLi[6].innerHTML = this.$dateInput.value;
         textLi[7].innerHTML = this.$timeInput.value;
         textLi[8].innerHTML = this.$commentTextarea.value;
+
         }
+
 
     }
 
@@ -321,24 +326,43 @@ document.addEventListener("DOMContentLoaded", function() {
      * TODO: validation, send data to server
      */
     submit(e) {
-      e.preventDefault();
+      // e.preventDefault();
       this.currentStep++;
+
+
       const category_array = [];
           this.$checkboxInputs.forEach(function (element) {
             if (element.checked === true) {
               category_array.push(element.value)
             }
           });
-      // $.ajax({
+      let institutionId = '';
+      this.$thirdStepInputs.forEach(function (element) {
+          if (element.checked === true) {
+            institutionId = element.value
+
+          }
+        });
+
+      // $.ajax("{% url 'add_donation' %}",
+      //     "POST",
+      //     {
       //   type: "POST",
-      //   url: "/add_donation/",
+      //   url: "{% url 'add_donation' %}",
       //   data: {
       //     'quantity': this.$bagsInput.value,
       //     'categories': category_array,
-      //     'institution':
+      //     'institution': institutionId,
+      //     'address': this.$addressInput,
+      //     'phone_number': this.$phoneInput,
+      //     'zip_code': this.$postcodeInput,
+      //     'pick_up_date': this.$dateInput,
+      //     'pick_up_time': this.$timeInput,
+      //     'pick_up_comment': this.$postcodeInput,
+      //     'user': this.$userId,
       //   },
       //   success: function () {
-      //     $('#message').html("<h2>Contact Form Submitted!</h2>")
+      //     $('#message').html("<h2>Donation Form Submitted!</h2>")
       //   }
       // });
       // return false;
