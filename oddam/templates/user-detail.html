@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load staticfiles %}
+<h1>{{ user.first_name }} {{ user.last_name }}</h1>
+    <h1>E-mail: {{ user.email }}</h1>
+
+    <h1>Przekazane dary:</h1>
+    <ul>
+    {% for donation in donations %}
+        <li>
+        <h1>{{ donation.institution }}</h1>
+        <h1>Ilość przekazanych worków: {{ donation.quantity }}</h1>
+        <h1>Kategorie darów:</h1>
+        <h1>{{ donation.categories.all|join:", " }}</h1>
+        <h1>Data odbioru darów: {{ donation.pick_up_date }}</h1>
+        <h1>Godzina odbioru darów: {{ donation.pick_up_time }}</h1>
+
+{#            {% if donation.is_taken == null or donation.is_taken == False %}#}
+            <form action="{% url 'user_detail' %}" method="post">{% csrf_token %}
+                <h1>Potwierdź odebranie darów</h1>
+                <input type="hidden" name="donation_id" value="{{ donation.id }}">
+                <button type="submit">Potwierdzam</button>
+            </form>
+{#            {% endif %}#}
+
+        </li><br>
+
+    {% endfor %}
+
+    <div style="color: gray">
+    {% for taken_donation in taken_donations %}
+
+        <li>
+        <h1>{{ taken_donation.institution }}</h1>
+        <h1>Ilość przekazanych worków: {{ taken_donation.quantity }}</h1>
+        <h1>Kategorie darów:</h1>
+        <h1>{{ taken_donation.categories.all|join:", " }}</h1>
+        <h1>Data odbioru darów: {{ taken_donation.pick_up_date }}</h1>
+        <h1>Godzina odbioru darów: {{ taken_donation.pick_up_time }}</h1>
+
+
+
+        </li><br>
+
+    {% endfor %}
+    </div>
+
+    </ul>
+
+
+
+{% endblock %}

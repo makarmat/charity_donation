@@ -344,9 +344,7 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         });
 
-      // $.ajax("{% url 'add_donation' %}",
-      //     "POST",
-      //     {
+      // $.ajax({
       //   type: "POST",
       //   url: "{% url 'add_donation' %}",
       //   data: {

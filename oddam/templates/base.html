@@ -17,8 +17,8 @@
           <li class="logged-user">
             Witaj {{ user.first_name }}
             <ul class="dropdown">
-              <li><a href="#">Profil</a></li>
-              <li><a href="#">Ustawienia</a></li>
+              <li><a href="{% url 'user_detail' %}">Profil</a></li>
+              <li><a href="{% url 'user_edit' %}">Ustawienia</a></li>
               <li><a href="{% url 'logout' %}">Wyloguj</a></li>
                {% if user.is_superuser %}
               <li><a href="http://127.0.0.1:8000/admin">Panel administracyjny</a></li>

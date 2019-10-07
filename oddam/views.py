@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Count
@@ -130,3 +131,63 @@ class LogoutView(View):
 class ConfirmationView(View):
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class UserDetailView(PermissionRequiredMixin, View):
+    permission_required = 'oddam.view_donation'
+
+    def get(self, request):
+        user = request.user
+        donations = Donation.objects.filter(user=user).filter(is_taken=False)
+        taken_donations = Donation.objects.filter(user=user).filter(is_taken=True)
+
+        return render(request, 'user-detail.html', {
+            'donations': donations,
+            'taken_donations': taken_donations
+        })
+
+    def post(self, request):
+        donation_id = request.POST['donation_id']
+        donation = Donation.objects.get(pk=donation_id)
+        donation.is_taken = True
+        donation.save()
+        return redirect('user_detail')
+
+
+class UserEditView(View):
+    def get(self, request):
+        return render(request, 'user-edit.html')
+
+    def post(self, request):
+        first_name = request.POST['name']
+        last_name = request.POST['surname']
+        email = request.POST['email']
+
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.username = email
+        user.save()
+        return redirect('user_detail')
+
+
+class ChangePasswordView(View):
+    def get(self, request):
+        return render(request, 'password-change.html')
+
+    def post(self, request):
+        password = request.POST['password']
+        re_password = request.POST['password2']
+        user = request.user
+        if password == re_password:
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Zmiana hasła powiodała się!')
+            return redirect('login')
+        else:
+            messages.warning(request, 'Wprowadzone hasła nie są takie same!')
+        return render(request, 'password-change.html')
+
+
+
