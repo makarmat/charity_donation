@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 
 from oddam.views import LandingPage, AddDonation, LoginView, RegisterView, LogoutView, ConfirmationView, UserDetailView, \
-    UserEditView, ChangePasswordView
+    UserEditView, ChangePasswordView, SendEmailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +30,6 @@ urlpatterns = [
     path('user-detail/', UserDetailView.as_view(), name='user_detail'),
     path('user-edit/', UserEditView.as_view(), name='user_edit'),
     path('password-change/', ChangePasswordView.as_view(), name='password_change'),
+    path('send-mail/', SendEmailView.as_view(), name='send_mail'),
 
 ]

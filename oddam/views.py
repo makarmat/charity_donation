@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect
@@ -188,6 +189,24 @@ class ChangePasswordView(View):
         else:
             messages.warning(request, 'Wprowadzone hasła nie są takie same!')
         return render(request, 'password-change.html')
+
+
+class SendEmailView(View):
+    def post(self, request):
+        name = request.POST['name']
+        surname = request.POST['surname']
+        message = request.POST['message']
+        admins = []
+        for user in User.objects.all().filter(is_staff=True):
+            admins.append(user.email)
+
+        send_mail(
+            'Wiadomość od {} {}'.format(name, surname),
+            message,
+            'django.send.mail.test.mm@gmail.com',
+            admins
+        )
+        return redirect('landing_page')
 
 
 
