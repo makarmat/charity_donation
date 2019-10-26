@@ -112,4 +112,4 @@ dmypy.json
 .idea
 .env
 .pycash
-*.txt
+.notes
