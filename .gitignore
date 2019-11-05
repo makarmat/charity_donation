@@ -110,7 +110,14 @@ dmypy.json
 # End of https://www.gitignore.io/api/python
 
 .idea
-.env
 .pycash
 .vscode
 
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
