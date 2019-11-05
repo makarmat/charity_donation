@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission, Group
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden, HttpRequest
 
 # Create your views here.
 from django.views import View
@@ -82,6 +83,7 @@ class AddDonation(PermissionRequiredMixin, View):
 
 class LoginView(View):
     def get(self, request):
+        user_id = request.session.get('user_id')        
         return render(request, 'login.html')
 
     def post(self, request):
@@ -93,7 +95,7 @@ class LoginView(View):
             return redirect('register')
         elif user is not None:
             login(request, user)
-            return redirect('landing_page')
+            return redirect(request.GET.get('next', 'landing_page'))
         else:
             messages.warning(request, 'Hasło nieprawidłowe!')
             return render(request, 'login.html')
@@ -109,7 +111,7 @@ class RegisterView(View):
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']
-        users_list = [user.email for user in User.objects.all()]
+        users_list = [user.email for user in User.objects.all()]        
         if '@' not in email:
             messages.warning(request, 'Wprowadzono niepoprawny e-mail!')
             return render(request, 'register.html')
@@ -119,12 +121,15 @@ class RegisterView(View):
         elif password != password2:
             messages.warning(request, 'Powtórzone hasło nie jest takie samo!')
             return render(request, 'register.html')
-        User.objects.create_user(username=email, first_name=name, last_name=surname, email=email, password=password)
+        group = Group.objects.get(name='standard_users')
+        user = User.objects.create_user(username=email, first_name=name, last_name=surname, email=email, password=password)
+        user.groups.add(group)
         return redirect('login')
 
 
 class LogoutView(View):
     def get(self, request):
+        user_id = request.session.get('user_id')        
         logout(request)
         return redirect('landing_page')
 
@@ -155,9 +160,13 @@ class UserDetailView(PermissionRequiredMixin, View):
         return redirect('user_detail')
 
 
-class UserEditView(View):
-    def get(self, request):
-        return render(request, 'user-edit.html')
+class UserEditView(PermissionRequiredMixin, View):
+    permission_required = 'auth.change_user'
+    
+    def get(self, request):        
+        if 'pass' in request.COOKIES:
+            return render(request, 'user-edit.html')
+        return redirect('check_password')
 
     def post(self, request):
         first_name = request.POST['name']
@@ -169,26 +178,52 @@ class UserEditView(View):
         user.last_name = last_name
         user.email = email
         user.username = email
-        user.save()
+        user.save()        
         return redirect('user_detail')
 
 
-class ChangePasswordView(View):
-    def get(self, request):
+class ChangePasswordView(PermissionRequiredMixin, View):
+    permission_required = 'auth.change_user'
+    
+    def get(self, request):        
         return render(request, 'password-change.html')
 
     def post(self, request):
+        old_password = request.POST['old_password']
         password = request.POST['password']
         re_password = request.POST['password2']
         user = request.user
-        if password == re_password:
-            user.set_password(password)
-            user.save()
-            messages.success(request, 'Zmiana hasła powiodała się!')
-            return redirect('login')
-        else:
-            messages.warning(request, 'Wprowadzone hasła nie są takie same!')
+        if user.check_password(old_password):
+            if password == re_password:
+                user.set_password(password)
+                user.save()
+                login(request, user)
+                messages.success(request, 'Zmiana hasła powiodała się!')
+                return redirect('user_edit')
+            else:
+                messages.warning(request, 'Wprowadzone hasła nie są takie same!')        
+            return render(request, 'password-change.html')
+        messages.warning(request, 'Dotychczasowe hasło jest nieprawidłowe!')
         return render(request, 'password-change.html')
+
+
+
+class CheckPasswordView(PermissionRequiredMixin, View):
+    permission_required = 'auth.change_user'
+    
+    def get(self, request):
+        return render(request, 'check_password.html')
+    
+    def post(self, request):
+        password = request.POST['password']
+        user = request.user
+        if user.check_password(password):             
+            result = redirect('user_edit')
+            result.set_cookie('pass', 'ok', expires=5)            
+            return result
+        messages.warning(request, 'Nieprawidłowe hasło!')
+        return render(request, 'check_password.html')
+
 
 
 class SendEmailView(View):
@@ -207,6 +242,3 @@ class SendEmailView(View):
             admins
         )
         return redirect('landing_page')
-
-
-

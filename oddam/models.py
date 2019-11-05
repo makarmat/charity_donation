@@ -31,7 +31,8 @@ class Institution(models.Model):
 class Donation(models.Model):
     quantity = models.IntegerField()
     categories = models.ManyToManyField(Category, related_name='donation_category')
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, related_name='donation_institution')
+    institution = models.ForeignKey(Institution,
+                                    on_delete=models.CASCADE, related_name='donation_institution')
     address = models.CharField(max_length=128)
     phone_number = models.IntegerField()
     city = models.CharField(max_length=64)
@@ -39,7 +40,8 @@ class Donation(models.Model):
     pick_up_date = models.DateField()
     pick_up_time = models.TimeField()
     pick_up_comment = models.CharField(max_length=256, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donation_user', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donation_user',
+                             null=True, blank=True)
     is_taken = models.BooleanField(null=True)
 
     @property

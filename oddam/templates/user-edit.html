@@ -2,7 +2,7 @@
 {% block content %}
 {% load staticfiles %}
     </header>
-
+    
     <section class="login-page">
       <h2>Edytuj swoje dane</h2>
       <form action="{% url 'user_edit' %}" method="post">{% csrf_token %}
